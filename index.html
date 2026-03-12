@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FileScan — Filesystem Treemap</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">FileScan<span>.io</span></div>
+      <div class="toolbar">
+        <button
+          class="btn primary"
+          onclick="document.getElementById('dirInput').click()"
+        >
+          &#x2295; Open Directory
+        </button>
+        <input
+          type="file"
+          id="dirInput"
+          webkitdirectory
+          multiple
+          onchange="loadDirectory(this)"
+        />
+
+        <div class="sep"></div>
+        <span class="scheme-label">Color by:</span>
+        <div class="scheme-btns">
+          <button
+            class="scheme-btn active"
+            data-scheme="random"
+            onclick="setScheme('random')"
+          >
+            Random
+          </button>
+          <button
+            class="scheme-btn"
+            data-scheme="type"
+            onclick="setScheme('type')"
+          >
+            File Type
+          </button>
+          <button
+            class="scheme-btn"
+            data-scheme="age"
+            onclick="setScheme('age')"
+          >
+            Age
+          </button>
+          <button
+            class="scheme-btn"
+            data-scheme="perms"
+            onclick="setScheme('perms')"
+          >
+            Permissions
+          </button>
+          <button
+            class="scheme-btn"
+            data-scheme="entropy"
+            onclick="setScheme('entropy')"
+          >
+            Entropy
+          </button>
+        </div>
+
+        <!-- Shuffle button: only visible in Random mode -->
+        <button
+          class="btn shuffle-btn"
+          id="shuffleBtn"
+          onclick="shuffleRandomColors()"
+          title="Generate new random colors"
+        >
+          &#x21BA; Shuffle Colors
+        </button>
+
+        <div class="sep"></div>
+        <div class="path-bar" id="pathBar">No directory loaded</div>
+      </div>
+    </header>
+
+    <div class="main">
+      <div class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-title">Stats</div>
+          <div class="stat-row">
+            <span class="stat-label">Total Files</span>
+            <span class="stat-value" id="statFiles">&#x2014;</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Total Dirs</span>
+            <span class="stat-value" id="statDirs">&#x2014;</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Total Size</span>
+            <span class="stat-value" id="statSize">&#x2014;</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Largest File</span
+            ><span class="stat-value" id="statLargest">&#x2014;</span>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-title">Navigation</div>
+          <div class="breadcrumb" id="breadcrumb">
+            <div
+              class="breadcrumb-item"
+              style="font-size: 0.55rem; opacity: 0.4"
+            >
+              Open a directory to navigate
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section" style="flex: 1; overflow-y: auto">
+          <div class="sidebar-title">Legend</div>
+          <div class="legend" id="legend"></div>
+        </div>
+      </div>
+
+      <div class="canvas-wrap">
+        <div class="progress-bar-wrap" id="progressWrap">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <canvas id="treemap"></canvas>
+
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">&#x2B21;</div>
+          <div class="empty-text">No filesystem loaded</div>
+          <div class="empty-sub">
+            Click "Open Directory" to visualize your files
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-dot idle" id="statusDot"></div>
+      <span id="statusText">Ready &#x2014; select a directory to begin</span>
+      <span style="margin-left: auto; opacity: 0.4"
+        >FileScan v1.0 &#x2014; Treemap Visualizer</span
+      >
+    </div>
+
+    <div id="tooltip">
+      <div class="tt-name" id="ttName"></div>
+      <div class="tt-row">
+        <span class="tt-key">Size:</span>
+        <span class="tt-val" id="ttSize"></span>
+      </div>
+      <div class="tt-row">
+        <span class="tt-key">Type:</span>
+        <span class="tt-val" id="ttType"></span>
+      </div>
+      <div class="tt-row">
+        <span class="tt-key">Modified:</span
+        ><span class="tt-val" id="ttMod"></span>
+      </div>
+      <div class="tt-row" id="ttPermRow">
+        <span class="tt-key">Perms:</span
+        ><span class="tt-val" id="ttPerms"></span>
+      </div>
+      <div class="tt-path" id="ttPath"></div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
